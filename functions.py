@@ -1,144 +1,399 @@
-from itertools import combinations,starmap
-from exceptions import IterationError as ITError
-def subsets(string):
-	yield ()
-	for y in string:
-		for i in combinations(string,string.index(y)+1):
-			yield i
-			
-def unique(iterable):
-	unlst=[]
-	for i in iterable:
-		if i not in unlst:
-			unlst.append(i)
-	return unlst
+
+from exceptions import  MathematicFunctionError as MTError
+from classes import Math
+from string import digits,ascii_letters
+from math import ceil,sin,cos,atan,pi,e
+from fractions import Fraction
+from exceptions import ArgumentError as AError
+from copy import *
+
+def __num(num):
+	try:
+		return int(num)
+	except Exception as e:
+		raise AError("Please send num to this function.",cr=2) from e
 		
-def sym_difference(it1,it2):
-	symlist=[]
-	for i in it1:
-		for j in it2:
-			if i not in it2 and j not in it1 and i != j:
-				symlist.extend([i,j])
-	return unique(symlist)
-	
-def swap_dict(dic):
-	return {v:k for k,v in dic.items()}
+def sum_squares(num):
+	__num(num)
+	f=0
+	for d in str(num):
+		f+=int(d)**2
+	return f
 
-def weight_sorter(it,wt):
-	return sorted(it,key=lambda x: wt[it.index(x)])
-	
-def repeated_iters(iterable,repeats):
-	res=[]
-	for i in range(len(iterable)):
-		if repeats[i] is None:
-			continue
-		for j in range(repeats[i]):
-			res.append(iterable[i])
-	return res
+def is_happy(num):
+	__num(num)
+	m=str(num)
+	items=[]
+	while m!=1 and sum_squares(m) not in items:
+		items.append(sum_squares(int(m)))
+		m=items[-1]
+	return items[-1]==1
 
-def iter_count(iterable,func=lambda a:-1):
-	return len(filter(iterable,func))
-	
-def generate(iterable,count=2):
-	return [iterable for _ in range(count)]
-	
-def pop_items_get(iterable):
-	it=list(iterable)
-	for i in iterable:
-		yield it
-		it=list(iterable)
-		it.pop(0)
-def first_last_add(iterable):
-	arg_get=[]
-	for i,j in zip(iterable,reversed(iterable)):
-		arg_get.extend([i,j])
-	return arg_get
-	
-def add_fields(iterable,fields):
-	#This function will be removed in Frog 2.2 because you can access it by swap_dict(dict(starzip(iterable,fields)))
-	return {k:v for k,v in zip(fields,iterable)}
+def factors(num):
+	__num(num)
+	factorlist=[]
+	for i in range(1,num+1):
+		if not num%i:
+			factorlist.append(i)
+	return factorlist
 
-def flatten(iterable, base_type=None, levels=None):
-    def step(node, level):
-        if (
-            ((levels is not None) and (level > levels))
-            or isinstance(node, (bytes))
-            or ((base_type is not None) and isinstance(node, base_type))
-        ):
-            yield node
-            return
+def is_perfect(num):
+	__num(num)
+	return sum(factors(num))==num
+	
+def is_prime(num):
+	__num(num)
+	return len(factors(num))==2
+	
+def is_emirp(num):
+	__num(num)
+	return is_prime(int(str(num)[::-1])) and is_prime(num)
+	
+def is_pythagorean(l1,l2,hyp):
+	__num(l1)
+	__num(l2)
+	__num(hyp)
+	return Math().pythagorean(l1,l2)==hyp
 
-        try:
-            tree = iter(node)
-        except TypeError:
-            yield node
-            return
+def collatz_loop(num):
+	__num(num)
+	loop=[]
+	while num!=1:
+		num=num//2 if not num%2 else num*3+1
+		loop.append(num)
+	return loop
+	
+def goldbach(num):
+	__num(num)
+	gbach=[]
+	if num%2 or num==2:
+		raise AError("num in goldbach conjecture must be even and greater than 2.",cr=1)
+	for i in range(num//2):
+		if is_prime(i) and is_prime(num-i):
+			gbach.append((i,num-i))
+	if not gbach:
+		raise MTError("You rejected goldbach conjecture!!!!",cr=3)
+	return gbach
+	
+def legender(n1,n2):
+	__num(n1);__num(n2)
+	
+	nsq1=n1**2
+	nsq2=n2**2
+	plist=[]
+	for i in range(nsq1,nsq2+1):
+		if isprime(i):
+			plist.append(i)
+	if plist:
+		return plist
+	raise MTError("You rejected legender conjecture!!!!",cr=3)
+	
+def calc(exp):
+	return f"{exp}={eval(exp)}"
+	
+def infact(num):
+	__num(num)
+	return sum(i for i in range(num+1) if num%i)
+			
+
+def first_primes(num):
+	__num(num)
+	c=0
+	fc=1
+	while c < num:
+		while True:
+			if is_prime(fc):
+				yield fc
+				c+=1
+				fc+=1
+				break
+			fc+=1
+
+def first_perfects(num):
+	__num(num)
+	c=0
+	fc=1
+	while c < num:
+		while True:
+			if is_perfect(fc):
+				yield fc
+				c+=1
+				fc+=1
+				break
+			fc+=1
+	
+def first_emirps(num):
+	__num(num)
+	c=0
+	fc=1
+	while c < num:
+		while True:
+			if is_emirp(fc):
+				yield fc
+				c+=1
+				fc+=1
+				break
+			fc+=1
+
+
+def primes_before(num):
+	__num(num)
+	for i in range(1,num+1):
+		if is_prime(num):
+			yield num
+
+def perfects_before(num):
+	__num(num)
+	for i in range(1,num+1):
+		if is_perfect(num):
+			yield num55ou
+			
+def emirps_before(num):
+	__num(num)
+	for i in range(1,num+1):
+		if is_emirp(num):
+			yield num
+	
+def pythagoreans_before(num):
+	__num(num)
+	for r in range(1,num+1):
+		for g in range(1,num+1):
+			for b in range(1,num+1):
+				if is_pythagorean(r,g,b):
+					yield (r,g,b)
+					
+def cont_frac(numbers):
+	num,den=numbers
+	frac=num/den
+	fraclist=[int(frac)]
+	while frac != fraclist[-1] and round(frac,9) != fraclist[-1]:
+		frac2 = frac-fraclist[-1]
+		frac=pow(frac2,-1)
+		fraclist.append(int(frac) if frac-int(frac) < 0.9999999 else round(frac))
+	return fraclist
+
+def ArithmeticAverage(*args):
+	n=len(args)
+	m=0
+	for item in args:
+		m+=item
+	m*=(1/n)
+	return m
+		
+def GeometricAverage(*args):
+	n=len(args)
+	m=1
+	for item in args:
+		m*=item	
+	m**=(1/n)
+	return m
+	
+def HarmonicAverage(*args):
+	n=len(args)
+	m=0
+	for item in args:
+		m+=(1/item)	
+	n/=m
+	return n
+	
+def RootSquareAverage(*args):
+	n=len(args)
+	m=0
+	for item in args:
+		m+=(item**2)
+	m/=n
+	m**=(1/2)
+	return m	
+#########################	
+def contfrac_to_frac(seq):
+    n, d, num, den = 0, 1, 1, 0
+    for u in seq:
+        n, d, num, den = num, den, num*u + n, den*u + d
+    return num, den   
+
+def gcd(*args):
+    gcdattrs = factors(args.pop(0))
+    for num in args:
+        gcdattrs.extend(factors(num))
+    return max(gcdattrs)
+    
+gcf = gcd
+
+
+def iscoprime(*args) -> bool:
+	return gcd(*args) == 1     
+
+def lcm(*args):
+    integers=args
+    greatest = max(integers)
+    i = 0
+    while True:
+        i += 1
+        if all(greatest*i % integer == 0 for integer in integers):
+            lcm = greatest*i
+            break
+    return lcm
+def digitsum(n):
+    if isinstance(n,float):
+        n = "".join(str(n).split("."))
+    elif isinstance(n,str):
+        n = float(n)
+        n = "".join(str(n).split("."))
+    sum = 0
+    n = abs(int(n))
+    while n > 0:
+        sum += n % 10
+        n = n//10
+    return sum
+
+def yielddigitsum(n):
+    while len(str(n)) != 1:
+        yield n
+        n = digitsum(n)
+    yield n 
+    
+def trunc(num, digits=0):
+    __num(digits);__num(num)
+    pow10 = 10 ** digits
+    return number * pow10 // 1 / pow10
+    
+def prime_factorise(n):
+    prime_factors = []
+    if n < 0:
+        prime_factors.append(-1)
+        n = abs(n)
+    while n % 2 == 0:
+        prime_factors.append(2)
+        n //= 2
+    f = 3
+    while f * f <= n:
+         if n % f == 0:
+            prime_factors.append(f)
+            n //= f
+         else:
+            f += 2
+    if n != 1: 
+        prime_factors.append(n)
+    return prime_factors
+    
+   
+   
+def sieve(n, p=None):
+    if n >=2:
+        num_list = list(range(2,int(n+1)))
+        composites_p = []
+        for i in num_list:
+            active_prime = i
+            if i**2 in num_list:
+                for k in list(filter(lambda m: m>=i**2, num_list)):
+                    if k % active_prime == 0:
+                        if p == active_prime:
+                            composites_p.append(k)
+                        num_list.remove(k)
+        if p:
+            return composites_p
         else:
-            for child in tree:
-                yield from step(child, level + 1)
+            return num_list 
+def bezout(a, b):
+     if isinstance(a,int) and isinstance(b,int):
+        a , b = max(a,b) , min(a,b)
+        first , second = a , b
+        s = [1,0]
+        t = [0,1]
+        while b != 0:
+            q = a // b
+            s.append(s[-2] - q * s[-1])
+            t.append(t[-2] - q * t[-1])
+            a , b = b , a%b
+        # Testing the Bézout's identity (Not necessary because the algorithm works fault-free and never Fails)
+        if s[-2] * first + t[-2] * second != a: 
+            print("Failed")
+        else:
+            return {"GCF": a, 
+                    "Bezout_identity": f"({s[-2]})x({first}) + ({t[-2]})x({second}) = {a}", 
+                    first: s[-2], 
+                    second: t[-2]}
 
-    yield from step(iterable, 0)
+def is_factorial(n):
+    i = 2
+    while n % i == 0:
+        n = n // i
+        i += 1
+        if n == i:
+            return i
+    return False
+
+digs = digits + ascii_letters
+
+def int2base(x, base):
+    if x < 0:
+        sign = -1
+    elif x == 0:
+        return digs[0]
+    else:
+        sign = 1
+    x *= sign
+    digits = []
+    while x:
+        digits.append(digs[x % base])
+        x //= base
+    if sign < 0:
+        digits.append('-')
+    digits.reverse()
+    return ''.join(digits)
+
+def base2base(x, x_base, to_base):
+    if isinstance(x,int):
+        x = str(x)
+    return int2base(int(x, x_base),to_base)
+
+# "base2base" only converts the whole numbers, while "convert" is the general form which converts any floating point number in any base to
+
+def convert(x, x_base, to_base, precision=None):
+    if not isinstance(x, str):
+        x = str(x)
+    integral, point, fractional = x.strip().partition('.')
+    num = int(integral + fractional, x_base) * x_base ** -len(fractional)
+
+    precision = len(fractional) if precision is None else precision
+    s = int2base(int(round(num / to_base ** -precision)), to_base)
+    if precision:
+        return s[:-precision] + '.' + s[-precision:]
+    else:
+        return s
+
+def deconvert(x, y):
+    if not isinstance(x, str):
+        x = str(x)
+    if not isinstance(y, str):
+        y = str(y)
+    for i in range(2,17):
+        for j in range(2, 17):
+            try:
+                if convert(x,i,j) == y:
+                    print(f"({x})_{i} = ({y})_{j}")
+            except ValueError:
+                pass
+
+def egyptian(num: int, den: int = 1) -> list[Fraction]:
+    neg = 0
+    if den == 1:
+        curr = Fraction(num)
+    else:
+        curr = Fraction(num,den)
+    if curr < 0:
+        neg = 1
+        curr *= -1
+    if curr.numerator == 1:
+        return [Fraction(1,den+1), Fraction(1,den*(den+1))]
+    nxt = Fraction(1,ceil(1/curr))
+    egpt = [curr, nxt,]
+    while curr.numerator != 1:
+        curr -= nxt
+        nxt = Fraction(1,ceil(1/curr))
+        egpt.append(nxt)
+    if neg:
+        egpt = [-1*i for i in egpt]
+    return egpt[1:]
     
-
-def starzip(*iterables):
-	star=[None]*(len(iterables[0]))
-	m=len(star)
-	forward=list(flatten(iterables))
-	for it in iterables:
-		for j in it:
-			star[it.index(j)]=tuple(i for i in forward if forward.index(i)%m==it.index(j))
-	return star
-	
-def unzip(it):
-	return [*starzip(*it)]	
-
-def get_quantity(lst):
-	dc={}
-	for it in lst:
-		if dc.get(it):
-			dc[it]+=1
-			continue
-		dc[it]=1
-	return dc
-	#from collections import Counter
-	#return dict(Counter(lst).items())
-	
-def call_repeat(lst):
-	return list(flatten([[item]*item for item in lst]))
-	
-def value_get(dicts,value):
-	for key in dicts:
-		if dicts[key]==value:
-			return key
-	
-def best_performance(*functions,args=(),kwargs={}):
-	perf={}
-	for i in functions:
-		m=time.time()
-		q=i(*args,**kwargs)
-		u=time.time()
-		perf[i]=(u-m)*10000
-	return value_get(perf,min(perf.values())).__name__
-	
-def sort(arr):    
-    for i in range(len(arr)):
-        cursor = arr[i]
-        pos =i
-        while pos > 0 and arr[pos - 1] > cursor:
-            arr[pos] = arr[pos - 1]
-            pos -=1
-        arr[pos] = cursor
-
-    return arr
     
-def double_combine(data):
-	for i in data:
-		for j in data:
-			yield (i,j)
-	
-def rotate(seq,number):
-	do_s=seq+seq
-	if number<=len(seq):
-		return do_s[number:number+len(seq)]
-	else:
-		return do_s[number-len(seq):number]

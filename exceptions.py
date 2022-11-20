@@ -1,4 +1,4 @@
-class BaseFrogException(TypeError):
+class BaseFrogException(Exception):
 	def __init__(self,msg,cr):
 		if not cr in [0,1,2,3,4]:
 			raise RuntimeError("\033[31;1mcr must be 4 or 3 or 2 or 1 or 0.\033[0;0m")
@@ -7,6 +7,9 @@ class BaseFrogException(TypeError):
 		msg_bound= "ERROR" if cr==2 else ("WARNING" if cr==1 else ("CRITICAL" if cr==3 else ("DEBUG" if cr==0 else "SUPERCRITICAL")))
 		print(f"\033[3{i};4{bc};1m{msg_bound}: Program Failed")
 
-
-class IterationError(BaseFrogException):
+class MathematicFunctionError(BaseFrogException):
 	pass
+		
+class ArgumentError(BaseFrogException):
+	pass
+	
